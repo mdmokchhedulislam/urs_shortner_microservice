@@ -579,12 +579,7 @@ curl http://localhost:3000/health
 - Implement URL expiration
 - Add bulk URL creation
 - Export analytics reports
-
-## Author
-
-[Abdullah Zayed (zayedabdullah.com)](https://zayedabdullah.com)
-Contact: [Email (contact@zayedabdullah.com)](mailto:contact@zayedabdullah.com) | [GitHub (xaadu)](https://github.com/xaadu) | [LinkedIn (abdullahzayed01)](https://www.linkedin.com/in/abdullahzayed01/)
-
+- 
 ## Contributing
 
 Contributions are welcome! Please feel free to submit a pull request.
