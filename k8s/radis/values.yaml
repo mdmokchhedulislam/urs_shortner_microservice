@@ -1,0 +1,23 @@
+replicaCount: 1
+
+image:
+  repository: redis
+  tag: "8-alpine"
+  pullPolicy: Always
+
+service:
+  port: 6379
+  type: ClusterIP
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 128Mi
+  limits:
+    cpu: 500m
+    memory: 512Mi
+
+persistence:
+  enabled: true
+  size: 1Gi
+  storageClass: ""   # leave blank for default storage class
