@@ -1,0 +1,29 @@
+replicaCount: 2
+
+image:
+  repository: mokchhedul/url_go-service
+  tag: "latest"
+  pullPolicy: Always
+
+service:
+  port: 8000
+  type: ClusterIP
+
+env:
+  REDIS_URL: "redis:6379"
+  PYTHON_SERVICE_URL: "http://python-service:5000"
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 128Mi
+  limits:
+    cpu: 500m
+    memory: 512Mi
+
+autoscaling:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 10
+  targetCPU: 60
+  targetMemory: 70
