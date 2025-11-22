@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "node-service.fullname" . }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: node-service
+  template:
+    metadata:
+      labels:
+        app: node-service
+    spec:
+      containers:
+        - name: node-service
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.service.port }}
+          env:
+            - name: REDIS_URL
+              value: "{{ .Values.env.REDIS_URL }}"
+            - name: PYTHON_SERVICE_URL
+              value: "{{ .Values.env.PYTHON_SERVICE_URL }}"
+            - name: GO_SERVICE_URL
+              value: "{{ .Values.env.GO_SERVICE_URL }}"
+          resources:
+{{ toYaml .Values.resources | indent 12 }}
