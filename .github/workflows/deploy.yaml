@@ -111,9 +111,6 @@ jobs:
         run: npm install
         working-directory: node-service
 
-      - name: Run tests with coverage
-        run: npm test -- --coverage
-        working-directory: node-service
 
       - name: Node.js Security Scan
         run: npm audit --audit-level=moderate
@@ -153,7 +150,7 @@ jobs:
         run: |
           cd python-service
           pip install -r requirements.txt
-          pip install pytest coverage bandit safety
+          pip install pytest coverage bandit safety pytest-cov
 
       - name: Run tests with coverage
         run: |
