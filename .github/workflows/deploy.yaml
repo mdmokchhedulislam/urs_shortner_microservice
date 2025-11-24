@@ -100,40 +100,35 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '18'
-          cache: 'npm'
-          cache-dependency-path: node-service/package-lock.json
 
       - name: Install dependencies
-        run: |
-          cd node-service
-          npm ci
+        run: npm ci
+        working-directory: node-service
 
       - name: Run tests with coverage
-        run: |
-          cd node-service
-          npm test -- --coverage
+        run: npm test -- --coverage
+        working-directory: node-service
 
       - name: Node.js Security Scan
-        run: |
-          cd node-service
-          npm audit --audit-level=moderate
+        run: npm audit --audit-level=moderate
+        working-directory: node-service
 
       - name: Build application
-        run: |
-          cd node-service
-          npm run build --if-present
+        run: npm run build --if-present
+        working-directory: node-service
 
       - name: Build Docker image
         run: |
-          cd node-service
           docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/node-service:${{ github.sha }} .
           docker tag ${{ secrets.DOCKERHUB_USERNAME }}/node-service:${{ github.sha }} ${{ secrets.DOCKERHUB_USERNAME }}/node-service:latest
+        working-directory: node-service
 
       - name: Push to Docker Hub
         run: |
           echo ${{ secrets.DOCKERHUB_TOKEN }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/node-service:${{ github.sha }}
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/node-service:latest
+        working-directory: node-service
 
   python-service:
     runs-on: ubuntu-latest
