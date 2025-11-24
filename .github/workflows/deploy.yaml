@@ -4,6 +4,11 @@ on:
   push:
     branches: [ main, develop ]
 
+# Workflow permissions
+permissions:
+  contents: read
+  security-events: write
+
 env:
   SONAR_HOST_URL: "http://54.234.27.75:9000"
 
@@ -13,34 +18,34 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-      with:
-        fetch-depth: 0
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-    - name: SonarQube Scan
-      uses: sonarsource/sonarqube-scan-action@v6
-      env:
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        SONAR_HOST_URL: ${{ env.SONAR_HOST_URL }}
+      - name: SonarQube Scan
+        uses: sonarsource/sonarqube-scan-action@v6
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ env.SONAR_HOST_URL }}
 
-    - name: Run Trivy vulnerability scanner
-      uses: aquasecurity/trivy-action@master
-      with:
-        scan-type: 'fs'
-        scan-ref: '.'
-        format: 'sarif'
-        output: 'trivy-results.sarif'
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          scan-ref: '.'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
 
-    - name: Upload Trivy scan results
-      uses: github/codeql-action/upload-sarif@v3
-      with:
-        sarif_file: 'trivy-results.sarif'
+      - name: Upload Trivy scan results
+        uses: github/codeql-action/upload-sarif@v4
+        with:
+          sarif_file: 'trivy-results.sarif'
 
-    - name: Secret Scanning
-      uses: gitleaks/gitleaks-action@v2
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Secret Scanning
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   go-service:
     runs-on: ubuntu-latest
@@ -48,35 +53,35 @@ jobs:
     if: needs.security-quality-scan.result == 'success'
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Set up Go
-      uses: actions/setup-go@v4
-      with:
-        go-version: '1.21'
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.21'
 
-    - name: Run Go tests with coverage
-      run: |
-        cd go-service
-        go test -v -race -coverprofile=coverage.out ./...
+      - name: Run Go tests with coverage
+        run: |
+          cd go-service
+          go test -v -race -coverprofile=coverage.out ./...
 
-    - name: Build Go binary
-      run: |
-        cd go-service
-        go build -o app .
+      - name: Build Go binary
+        run: |
+          cd go-service
+          go build -o app .
 
-    - name: Build Docker image
-      run: |
-        cd go-service
-        docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/go-service:${{ github.sha }} .
-        docker tag ${{ secrets.DOCKERHUB_USERNAME }}/go-service:${{ github.sha }} ${{ secrets.DOCKERHUB_USERNAME }}/go-service:latest
+      - name: Build Docker image
+        run: |
+          cd go-service
+          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/go-service:${{ github.sha }} .
+          docker tag ${{ secrets.DOCKERHUB_USERNAME }}/go-service:${{ github.sha }} ${{ secrets.DOCKERHUB_USERNAME }}/go-service:latest
 
-    - name: Push to Docker Hub
-      run: |
-        echo ${{ secrets.DOCKERHUB_TOKEN }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
-        docker push ${{ secrets.DOCKERHUB_USERNAME }}/go-service:${{ github.sha }}
-        docker push ${{ secrets.DOCKERHUB_USERNAME }}/go-service:latest
+      - name: Push to Docker Hub
+        run: |
+          echo ${{ secrets.DOCKERHUB_TOKEN }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/go-service:${{ github.sha }}
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/go-service:latest
 
   node-service:
     runs-on: ubuntu-latest
@@ -84,47 +89,47 @@ jobs:
     if: needs.security-quality-scan.result == 'success'
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Set up Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '18'
-        cache: 'npm'
-        cache-dependency-path: node-service/package-lock.json
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: node-service/package-lock.json
 
-    - name: Install dependencies
-      run: |
-        cd node-service
-        npm ci
+      - name: Install dependencies
+        run: |
+          cd node-service
+          npm ci
 
-    - name: Run tests with coverage
-      run: |
-        cd node-service
-        npm test -- --coverage
+      - name: Run tests with coverage
+        run: |
+          cd node-service
+          npm test -- --coverage
 
-    - name: Node.js Security Scan
-      run: |
-        cd node-service
-        npm audit --audit-level=moderate
+      - name: Node.js Security Scan
+        run: |
+          cd node-service
+          npm audit --audit-level=moderate
 
-    - name: Build application
-      run: |
-        cd node-service
-        npm run build --if-present
+      - name: Build application
+        run: |
+          cd node-service
+          npm run build --if-present
 
-    - name: Build Docker image
-      run: |
-        cd node-service
-        docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/node-service:${{ github.sha }} .
-        docker tag ${{ secrets.DOCKERHUB_USERNAME }}/node-service:${{ github.sha }} ${{ secrets.DOCKERHUB_USERNAME }}/node-service:latest
+      - name: Build Docker image
+        run: |
+          cd node-service
+          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/node-service:${{ github.sha }} .
+          docker tag ${{ secrets.DOCKERHUB_USERNAME }}/node-service:${{ github.sha }} ${{ secrets.DOCKERHUB_USERNAME }}/node-service:latest
 
-    - name: Push to Docker Hub
-      run: |
-        echo ${{ secrets.DOCKERHUB_TOKEN }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
-        docker push ${{ secrets.DOCKERHUB_USERNAME }}/node-service:${{ github.sha }}
-        docker push ${{ secrets.DOCKERHUB_USERNAME }}/node-service:latest
+      - name: Push to Docker Hub
+        run: |
+          echo ${{ secrets.DOCKERHUB_TOKEN }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/node-service:${{ github.sha }}
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/node-service:latest
 
   python-service:
     runs-on: ubuntu-latest
@@ -132,40 +137,40 @@ jobs:
     if: needs.security-quality-scan.result == 'success'
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.11'
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
 
-    - name: Install dependencies
-      run: |
-        cd python-service
-        pip install -r requirements.txt
-        pip install pytest coverage bandit safety
+      - name: Install dependencies
+        run: |
+          cd python-service
+          pip install -r requirements.txt
+          pip install pytest coverage bandit safety
 
-    - name: Run tests with coverage
-      run: |
-        cd python-service
-        coverage run -m pytest
-        coverage xml
+      - name: Run tests with coverage
+        run: |
+          cd python-service
+          coverage run -m pytest
+          coverage xml
 
-    - name: Python Security Scan
-      run: |
-        cd python-service
-        bandit -r . -f json -o bandit-results.json
-        safety check
+      - name: Python Security Scan
+        run: |
+          cd python-service
+          bandit -r . -f json -o bandit-results.json
+          safety check
 
-    - name: Build Docker image
-      run: |
-        cd python-service
-        docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/python-service:${{ github.sha }} .
-        docker tag ${{ secrets.DOCKERHUB_USERNAME }}/python-service:${{ github.sha }} ${{ secrets.DOCKERHUB_USERNAME }}/python-service:latest
+      - name: Build Docker image
+        run: |
+          cd python-service
+          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/python-service:${{ github.sha }} .
+          docker tag ${{ secrets.DOCKERHUB_USERNAME }}/python-service:${{ github.sha }} ${{ secrets.DOCKERHUB_USERNAME }}/python-service:latest
 
-    - name: Push to Docker Hub
-      run: |
-        echo ${{ secrets.DOCKERHUB_TOKEN }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
-        docker push ${{ secrets.DOCKERHUB_USERNAME }}/python-service:${{ github.sha }}
-        docker push ${{ secrets.DOCKERHUB_USERNAME }}/python-service:latest
+      - name: Push to Docker Hub
+        run: |
+          echo ${{ secrets.DOCKERHUB_TOKEN }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/python-service:${{ github.sha }}
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/python-service:latest
