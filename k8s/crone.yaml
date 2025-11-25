@@ -1,0 +1,21 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: scale-up-noon
+spec:
+  schedule: "55 11 * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: scaler
+            image: bitnami/kubectl
+            command:
+            - /bin/sh
+            - -c
+            - |
+              kubectl scale deployment python-service --replicas=8
+              kubectl scale deployment node-service --replicas=6
+              kubectl scale deployment go-service --replicas=10
+          restartPolicy: OnFailure
