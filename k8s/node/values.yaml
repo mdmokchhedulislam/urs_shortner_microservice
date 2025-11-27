@@ -1,5 +1,6 @@
 replicaCount: 2
 
+fullname: "nodes-service"
 image:
   repository: mokchhedul/url_node-service
   tag: "latest"
