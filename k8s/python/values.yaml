@@ -1,4 +1,5 @@
 replicaCount: 2
+fullname: "python-service"
 
 image:
   repository: mokchhedul/url_python-service

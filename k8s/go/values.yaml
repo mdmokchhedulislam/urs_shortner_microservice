@@ -1,4 +1,5 @@
 replicaCount: 2
+fullname: "go-service"
 
 image:
   repository: mokchhedul/url_go-service
