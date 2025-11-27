@@ -2,7 +2,7 @@ replicaCount: 2
 
 fullname: "nodes-service"
 image:
-  repository: mokchhedul/url_node-service
+  repository: mokchhedul/node-service
   tag: "d7455d4bd0ec66f4d76d1bd36c4ddedc7f9d45b6"
   pullPolicy: Always
 
