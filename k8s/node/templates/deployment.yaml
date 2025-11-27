@@ -26,4 +26,9 @@ spec:
             - name: GO_SERVICE_URL
               value: "{{ .Values.env.GO_SERVICE_URL }}"
           resources:
-{{ toYaml .Values.resources | indent 12 }}
+            limits:
+              cpu: {{ .Values.resources.limits.cpu }}
+              memory: {{ .Values.resources.limits.memory }}
+            requests:
+              cpu: {{ .Values.resources.requests.cpu }}
+              memory: {{ .Values.resources.requests.memory }}

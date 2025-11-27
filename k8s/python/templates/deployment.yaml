@@ -1,19 +1,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Values.fullname}}
+  name: {{ .Values.fullname }}
+  labels:
+    app: {{ .Values.fullname }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app: python-service
+      app: {{ .Values.fullname }}
   template:
     metadata:
       labels:
-        app: python-service
+        app: {{ .Values.fullname }}
     spec:
       containers:
-        - name: python-service
+        - name: {{ .Values.fullname }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
@@ -26,4 +28,9 @@ spec:
             - name: REDIS_URL
               value: "{{ .Values.env.REDIS_URL }}"
           resources:
-{{ toYaml .Values.resources | indent 12 }}
+            limits:
+              cpu: {{ .Values.resources.limits.cpu }}
+              memory: {{ .Values.resources.limits.memory }}
+            requests:
+              cpu: {{ .Values.resources.requests.cpu }}
+              memory: {{ .Values.resources.requests.memory }}
