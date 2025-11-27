@@ -3,7 +3,7 @@ fullname: "python-service"
 
 image:
   repository: mokchhedul/url_python-service
-  tag: "latest"
+  tag: "d7455d4bd0ec66f4d76d1bd36c4ddedc7f9d45b6"
   pullPolicy: Always
 
 service:
