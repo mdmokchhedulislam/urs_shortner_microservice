@@ -1,12 +1,12 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: go-service-app
+  name: python-service-app
   namespace: argocd
   annotations:
-    argocd-image-updater.argoproj.io/image-list: go-image=mokchhedul/go-service
-    argocd-image-updater.argoproj.io/go-image.update-strategy: digest
-    argocd-image-updater.argoproj.io/go-image.allow-tags: regexp:^([a-f0-9]{7,40})$
+    argocd-image-updater.argoproj.io/image-list: python-image=mokchhedul/python-service
+    argocd-image-updater.argoproj.io/python-image.update-strategy: digest
+    argocd-image-updater.argoproj.io/python-image.allow-tags: regexp:^([a-f0-9]{7,40})$
     argocd-image-updater.argoproj.io/write-back-method: git:secret:argocd/argocd-image-updater-git-creds
 
 spec:
@@ -14,7 +14,7 @@ spec:
   source:
     repoURL: 'https://github.com/mdmokchhedulislam/urs_shortner_microservice.git'
     targetRevision: main
-    path: k8s/go
+    path: k8s/python
   destination:
     namespace: default
     server: https://kubernetes.default.svc
