@@ -10,8 +10,6 @@ spec:
   source:
     repoURL: 'https://github.com/mdmokchhedulislam/urs_shortner_microservice.git'
     targetRevision: main
-    # CHANGE THIS path to the actual path in your repo where redis YAMLs are stored.
-    # common choices: "redis", "infra/redis", "platform/redis", or "k8s/redis"
     path: k8s/redis
   destination:
     server: 'https://kubernetes.default.svc'
