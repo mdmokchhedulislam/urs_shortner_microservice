@@ -7,6 +7,7 @@ metadata:
     argocd-image-updater.argoproj.io/image-list: node-image=mokchhedul/node-service
     argocd-image-updater.argoproj.io/node-image.update-strategy: digest
     argocd-image-updater.argoproj.io/node-image.allow-tags: regexp:^([a-f0-9]{7,40})$
+    argocd-image-updater.argoproj.io/node-image.container-name: node-service
     argocd-image-updater.argoproj.io/write-back-method: git:secret:argocd/argocd-image-updater-git-creds
 
 spec:
