@@ -2,10 +2,9 @@ apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: redis-app
-  namespace: argocd
   labels:
     app.kubernetes.io/name: redis
-spec:
+spec: 
   project: url-shortener-project
   source:
     repoURL: 'https://github.com/mdmokchhedulislam/urs_shortner_microservice.git'
@@ -18,3 +17,6 @@ spec:
     automated:
       prune: true
       selfHeal: true
+    syncOptions:
+      - CreateNamespace=true          
+      - ApplyOutOfSyncOnly=true
