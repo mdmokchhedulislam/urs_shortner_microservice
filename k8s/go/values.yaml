@@ -26,5 +26,5 @@ autoscaling:
   enabled: true
   minReplicas: 2
   maxReplicas: 10
-  targetCPU: 60
-  targetMemory: 70
+  targetCPU: 30
+  targetMemory: 30
