@@ -2,7 +2,7 @@ apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: python-service-app
-  namespace: argocd
+  # namespace: argocd
   annotations:
     argocd-image-updater.argoproj.io/image-list: python-image=mokchhedul/python-service
     argocd-image-updater.argoproj.io/python-image.update-strategy: digest

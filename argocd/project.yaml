@@ -2,7 +2,7 @@ apiVersion: argoproj.io/v1alpha1
 kind: AppProject
 metadata:
   name: url-shortener-project
-  namespace: argocd
+  # namespace: argocd
 spec:
   description: "Microservice project for URL shortener"
   sourceRepos:
