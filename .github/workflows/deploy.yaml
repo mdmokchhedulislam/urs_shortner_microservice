@@ -10,7 +10,7 @@ permissions:
   security-events: write
 
 env:
-  SONAR_HOST_URL: "http://54.234.27.75:9000"
+  SONAR_HOST_URL: "http://13.222.174.100:9000"
 
 jobs:
 
