@@ -13,7 +13,7 @@ export let options = {
 };
 
 export default function () {
-  let res =http.get('http://a7a15bda690ef4c019c2108d1eb7e75e-697610890.us-east-1.elb.amazonaws.com:5000/shorten?url=https://example.com');
+  let res =http.get('http://a7a15bda690ef4c019c2108d1eb7e75e-697610890.us-east-1.elb.amazonaws.com:5000');
   check(res, {
     'status is 200': (r) => r.status === 200,
     'response body not empty': (r) => r.body.length > 0,
