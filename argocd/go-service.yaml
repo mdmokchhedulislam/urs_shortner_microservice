@@ -2,7 +2,7 @@ apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: go-service-app
-  # namespace: argocd
+  namespace: argocd
   annotations:
     argocd-image-updater.argoproj.io/image-list: go-image=mokchhedul/go-service
     argocd-image-updater.argoproj.io/go-image.update-strategy: digest
